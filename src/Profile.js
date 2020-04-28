@@ -7,11 +7,12 @@ const cardWidth = {
 const Profile = ({ user }) => {
   return (
     <React.Fragment>
-      <div key={user.username} className="card" style={cardWidth}>
-        <p>{user.name}</p>
+      <div key={user.login.username} className="card" style={cardWidth}>
+        <p>{user.name.first}</p>
         <div>
-          <img src={user.image} alt={user.name} />
+          <img src={user.picture.medium} alt={user.name.first} />
         </div>
+        <p>{user.location.city}</p>
         <p>{user.email}</p>
         <hr />
       </div>

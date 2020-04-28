@@ -1,58 +1,52 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import Profile from './Profile';
 
-class App extends Component {
-  state = {
-    users: [],
-    isLoading: true,
-    error: null
-  }
 
-  getUsers() {
-    axios
-      .get("https://randomuser.me/api/?results=6")
-      .then(response =>
-        response.data.results.map(user => ({
-          name: `${user.name.first} ${user.name.last}`,
-          username: `${user.login.username}`,
-          email: `${user.email}`,
-          image: `${user.picture.thumbnail}`
-        }))
-      )
-      .then(users => {
-        this.setState({
-          users,
-          isLoading: false
-        });
-      })
-      .catch(error => this.setState({ error, isLoading: false }));
-  }
+const App = () => {
+  // const [state, setState] = useState({
+  //   users: [],
+  //   isLoading: true,
+  //   error: null
+  // });
+  const [users, setUsers] = useState('')
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('')
+  const getRandomUser = async () => {
+    try {
+      const response = await axios.get("https://randomuser.me/api/?results=6")
+      const data = response.data;
+      console.log(data);
+      setUsers(data);
+      setIsLoading(false)
+      console.log(users.results, isLoading);
+    } catch (error) {
+      setError(error);
+    }
 
-  componentDidMount() {
-    this.getUsers();
+
   }
-  render() {
-    const { isLoading, users } = this.state;
-    return (
-      <React.Fragment>
-        <div className="container">
-          <h2>Random User</h2>
-          <div className="row">
-            {!isLoading ? (
-              users.map(user => {
-                return (
-                  <Profile key={user.username} user={user} />
-                );
-              })
-            ) : (
-                <p>Loading...</p>
-              )}
-          </div>
-        </div>
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      <div className="container">
+        Hello, there I am Aminat.
+        <button onClick={getRandomUser}>Get Users</button>
+      </div>
+      <div className="row">
+        {!isLoading ? (
+          users.results.map(user => {
+            return (
+              <Profile key={user.login.username} user={user} />
+            );
+          })
+        ) : (
+            <p>Loading...</p>
+          )}
+         <p>{error}</p>
+      </div>
+    </React.Fragment>
+  )
+
 }
 
 export default App;
