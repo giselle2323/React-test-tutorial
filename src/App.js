@@ -2,47 +2,46 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Profile from './Profile';
 
-
-const App = () => {
+const App = ({ url }) => {
   // const [state, setState] = useState({
   //   users: [],
   //   isLoading: true,
   //   error: null
   // });
-  const [users, setUsers] = useState('')
+  const [users, setUsers] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('')
   const getRandomUser = async () => {
     try {
-      const response = await axios.get("https://randomuser.me/api/?results=6")
-      const data = response.data;
+      const response = await axios.get(url)
+      const data = response.data.results;
       console.log(data);
       setUsers(data);
       setIsLoading(false)
-      console.log(users.results, isLoading);
     } catch (error) {
       setError(error);
-    }
-
-
+    } 
   }
+  const buttonText = 'Get Users';
   return (
     <React.Fragment>
       <div className="container">
-        Hello, there I am Aminat.
-        <button onClick={getRandomUser}>Get Users</button>
+        <h1>Hello there, I am Aminat.</h1>
+        <br />
+        <button data-testid="get-user-button" onClick={getRandomUser}> {buttonText} </button>
       </div>
-      <div className="row">
+      <div className="row" >
+
         {!isLoading ? (
-          users.results.map(user => {
+          users.map(user => {
             return (
-              <Profile key={user.login.username} user={user} />
+              <Profile data-testid="resolved" key={user.login.username} user={user} />
             );
           })
         ) : (
-            <p>Loading...</p>
+            <p data-testid="loading">Click to button to get users</p>
           )}
-         <p>{error}</p>
+         
       </div>
     </React.Fragment>
   )
@@ -50,4 +49,3 @@ const App = () => {
 }
 
 export default App;
-

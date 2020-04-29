@@ -8,12 +8,12 @@ const Profile = ({ user }) => {
   return (
     <React.Fragment>
       <div key={user.login.username} className="card" style={cardWidth}>
-        <p>{user.name.first}</p>
+        <p>My name: {user.name.first}</p>
         <div>
           <img src={user.picture.medium} alt={user.name.first} />
         </div>
-        <p>{user.location.city}</p>
-        <p>{user.email}</p>
+        <p>Location: {user.location.city}</p>
+        <p>Email: {user.email}</p>
         <hr />
       </div>
     </React.Fragment>
