@@ -35,7 +35,7 @@ const App = ({ url }) => {
         {!isLoading ? (
           users.map(user => {
             return (
-              <Profile data-testid="resolved" key={user.login.username} user={user} />
+              <Profile key={user.login.username} user={user} />
             );
           })
         ) : (

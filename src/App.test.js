@@ -33,8 +33,7 @@ it("fetches and displays data", async () => {
   expect(getByTestId("loading")).toHaveTextContent("Click to button to get users");
 
   /*I have a major issue here, the data recieved
-    from the API was rendered in the Profile component, I dont know how to pass a data-testid
-    to this component to check for what was rendered.
+    from the API was rendered in the Profile component <a child component>, how to test this component is confusing me.
   */
   const resolvedSpan = await waitForElement(() => getByTestId("resolved"));
 
