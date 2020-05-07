@@ -12,15 +12,16 @@ const App = ({ url }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('')
   const getRandomUser = async () => {
-    try {
-      const response = await axios.get(url)
-      const data = response.data.results;
+    axios.get(url)
+    .then(res => {
+      const data = res.data.results;
       console.log(data);
       setUsers(data);
       setIsLoading(false)
-    } catch (error) {
+    })
+    .catch (error => {
       setError(error);
-    } 
+    })
   }
   const buttonText = 'Get Users';
   return (

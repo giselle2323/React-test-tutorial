@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitForElement, fireEvent, findByTestId, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import axiosMock from 'axios';
 import App from './App';
@@ -7,41 +7,41 @@ import App from './App';
 jest.mock('axios')
 afterEach(cleanup)
 
-it('button is clicked', async () => {
+const getComponent = ({ props = {} } = {}) => {
+  const mockUser = {
+    login: { username: "aminat" },
+    name: { first: "jumoke" },
+    picture: { medium: "https://www.images.com/picture" },
+    location: { city: "Lagos" },
+    email: "jumoke@gmail.com",
+  };
+  const apiResponse = Promise.resolve({ data: { results: [mockUser] } });
+  axiosMock.get = jest.fn().mockReturnValue(apiResponse);
+  return {
+    ...render(<App {...props} />),
+    apiResponse,
+    mockUser,
+  };
+};
 
-  const { container } = render(<App />)
+describe("App", () => {
+  it("should render successfully", async () => {
+    const { getByText, getByTestId } = getComponent();
+    expect(getByText(/hello there, i am aminat./i));
+    expect(getByTestId("get-user-button"));
+  });
 
-  const button = await findByTestId(container, "get-user-button")
-  fireEvent.click(button) 
+  it("should fetch and displays data when button is clicked", async () => {
+    const url = "/users";
+    const { getByTestId, getByAltText, apiResponse, mockUser } = getComponent({
+      props: { url },
+    });
+    const btn = getByTestId("get-user-button");
+    fireEvent.click(btn);
 
-});
-
-it("fetches and displays data", async () => {
-  axiosMock.get.mockResolvedValueOnce(
-    { 
-    
-      data: {
-        greeting: "Hello there"
-      }
-    }
-  );
-
- 
-  const url = "/users";
-  const { getByTestId, asFragment } = render(<App url={url} />);
-
-  expect(getByTestId("loading")).toHaveTextContent("Click to button to get users");
-
-  /*I have a major issue here, the data recieved
-    from the API was rendered in the Profile component <a child component>, how to test this component is confusing me.
-  */
-  const resolvedSpan = await waitForElement(() => getByTestId("resolved"));
-
-  expect(resolvedSpan).toHaveTextContent(" ");
-  expect(axiosMock.get).toHaveBeenCalledTimes(1);
-  expect(axiosMock.get).toHaveBeenCalledWith(url);
-  expect(asFragment()).toMatchSnapshot();
-});
-
-
-
+    await act(() => apiResponse);
+    expect(getByAltText(mockUser.name.first));
+    expect(axiosMock.get).toHaveBeenCalledTimes(1);
+    expect(axiosMock.get).toHaveBeenCalledWith(url);
+  })
+})
